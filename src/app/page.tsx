@@ -4,15 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/Header";
 import { ProxyStatus } from "@/components/ProxyStatus";
-import { FavoritesList } from "@/components/FavoritesList";
+import { SitesList } from "@/components/SitesList";
 import { ProxyList } from "@/components/ProxyList";
-import { mockProxies, mockFavorites } from "@/lib/mock-data";
-import { ProxyConfig, FavoriteConfig } from "@/types";
+import { mockProxies, mockSites } from "@/lib/mock-data";
+import { ProxyConfig, SiteConfig } from "@/types";
 
 export default function HomePage() {
   const router = useRouter();
   const [proxies, setProxies] = useState<ProxyConfig[]>(mockProxies);
-  const [favorites, setFavorites] = useState<FavoriteConfig[]>(mockFavorites);
+  const [sites, setSites] = useState<SiteConfig[]>(mockSites);
 
   const proxyStatus = {
     configured: proxies.length,
@@ -20,8 +20,8 @@ export default function HomePage() {
     lastTested: new Date().toISOString(),
   };
 
-  const handleLaunchFavorite = (favorite: FavoriteConfig) => {
-    console.log("Launching:", favorite);
+  const handleLaunchSite = (site: SiteConfig) => {
+    console.log("Launching:", site);
     // TODO: 實際啟動邏輯
   };
 
@@ -39,8 +39,8 @@ export default function HomePage() {
     // TODO: 顯示新增對話框
   };
 
-  const handleAddFavorite = () => {
-    console.log("Adding new favorite");
+  const handleAddSite = () => {
+    console.log("Adding new site");
     // TODO: 顯示新增對話框
   };
 
@@ -51,17 +51,17 @@ export default function HomePage() {
         onAboutClick={() => router.push("/about")}
       />
 
-      <div className="p-6 space-y-6 max-w-7xl">
+      <div className="container mx-auto p-6 space-y-6 max-w-7xl">
         {/* Proxy Status */}
         <div className="max-w-md">
           <ProxyStatus status={proxyStatus} />
         </div>
 
-        {/* Favorites Section */}
-        <FavoritesList
-          favorites={favorites}
-          onLaunch={handleLaunchFavorite}
-          onAddFavorite={handleAddFavorite}
+        {/* Sites Section */}
+        <SitesList
+          sites={sites}
+          onLaunch={handleLaunchSite}
+          onAddSite={handleAddSite}
         />
 
         {/* Proxy Management Section */}

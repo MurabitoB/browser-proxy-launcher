@@ -9,7 +9,7 @@ export interface ProxyConfig {
   isActive?: boolean;
 }
 
-export interface FavoriteConfig {
+export interface SiteConfig {
   id: string;
   name: string;
   url: string;
@@ -36,6 +36,5 @@ export interface AppSettings {
   launchOnStartup: boolean;
   minimizeToTray: boolean;
   closeToTray: boolean;
-  favoritesDisplay: "grid" | "list";
   maxRecentItems: number;
 }

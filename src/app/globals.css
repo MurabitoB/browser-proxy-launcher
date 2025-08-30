@@ -1,8 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
 :root {
   --radius: 0.625rem;
   --card: hsl(0 0% 100%);
@@ -57,7 +55,7 @@
   --destructive: hsl(0 62.8% 30.6%);
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(240 5.9% 30%);
-  --input: hsl(240 3.7% 15.9%);
+  --input: hsl(240 3.7% 25%);
   --ring: hsl(240 4.9% 83.9%);
   --chart-1: hsl(220 70% 50%);
   --chart-2: hsl(160 60% 45%);

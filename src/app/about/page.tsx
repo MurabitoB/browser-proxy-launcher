@@ -44,8 +44,8 @@ export default function About() {
                 </h3>
                 <p className="text-muted-foreground">
                   A desktop application for easily launching browsers with proxy
-                  configurations. Manage multiple proxies, save your favorite
-                  websites, and launch them with different browsers and proxy
+                  configurations. Manage multiple proxies, save your sites,
+                  and launch them with different browsers and proxy
                   settings with just one click.
                 </p>
               </div>
@@ -69,7 +69,7 @@ export default function About() {
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-green-500">✓</span>
-                  Favorites management with proxy binding
+                  Sites management with proxy binding
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-green-500">✓</span>

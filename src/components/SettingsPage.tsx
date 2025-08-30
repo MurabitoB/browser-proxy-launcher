@@ -42,7 +42,7 @@ export function SettingsPage({
         <h1 className="text-2xl font-bold text-foreground">Settings</h1>
       </header>
 
-      <div className="p-6 space-y-6 max-w-4xl">
+      <div className="container mx-auto p-6 space-y-6 max-w-4xl">
         {/* Browser Configuration */}
         <Card>
           <CardHeader>
@@ -186,37 +186,6 @@ export function SettingsPage({
               </div>
             </div>
 
-            <div>
-              <label className="text-sm font-medium mb-2 block">
-                Favorites Display:
-              </label>
-              <div className="flex gap-4">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="display"
-                    value="grid"
-                    checked={currentSettings.favoritesDisplay === "grid"}
-                    onChange={(e) =>
-                      updateSetting("favoritesDisplay", e.target.value)
-                    }
-                  />
-                  Grid view
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="display"
-                    value="list"
-                    checked={currentSettings.favoritesDisplay === "list"}
-                    onChange={(e) =>
-                      updateSetting("favoritesDisplay", e.target.value)
-                    }
-                  />
-                  List view
-                </label>
-              </div>
-            </div>
 
             <div>
               <label className="text-sm font-medium mb-2 block">

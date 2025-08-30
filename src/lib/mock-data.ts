@@ -1,4 +1,4 @@
-import { ProxyConfig, FavoriteConfig, Browser, AppSettings } from "@/types";
+import { ProxyConfig, SiteConfig, Browser, AppSettings } from "@/types";
 
 export const mockBrowsers: Browser[] = [
   {
@@ -42,7 +42,7 @@ export const mockProxies: ProxyConfig[] = [
   },
 ];
 
-export const mockFavorites: FavoriteConfig[] = [
+export const mockSites: SiteConfig[] = [
   {
     id: "1",
     name: "Google",
@@ -72,6 +72,5 @@ export const mockSettings: AppSettings = {
   launchOnStartup: false,
   minimizeToTray: true,
   closeToTray: false,
-  favoritesDisplay: "grid",
   maxRecentItems: 10,
 };

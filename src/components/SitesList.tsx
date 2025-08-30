@@ -1,42 +1,42 @@
-import { FavoriteConfig } from "@/types";
+import { SiteConfig } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Rocket, Plus, ExternalLink } from "lucide-react";
 
-interface FavoritesListProps {
-  favorites: FavoriteConfig[];
-  onLaunch: (favorite: FavoriteConfig) => void;
-  onAddFavorite: () => void;
+interface SitesListProps {
+  sites: SiteConfig[];
+  onLaunch: (site: SiteConfig) => void;
+  onAddSite: () => void;
 }
 
-export function FavoritesList({
-  favorites,
+export function SitesList({
+  sites,
   onLaunch,
-  onAddFavorite,
-}: FavoritesListProps) {
+  onAddSite,
+}: SitesListProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Favorites</CardTitle>
+        <CardTitle className="text-lg">Sites</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
-          {favorites.map((favorite) => (
+          {sites.map((site) => (
             <div
-              key={favorite.id}
+              key={site.id}
               className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"
             >
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">{favorite.name}</span>
+                  <span className="font-medium">{site.name}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <span>
-                    {favorite.browser.icon} {favorite.browser.name}
+                    {site.browser.name}
                   </span>
-                  {favorite.proxyId && (
+                  {site.proxyId && (
                     <Badge variant="outline" className="text-xs">
                       Proxy
                     </Badge>
@@ -45,7 +45,7 @@ export function FavoritesList({
               </div>
               <Button
                 size="sm"
-                onClick={() => onLaunch(favorite)}
+                onClick={() => onLaunch(site)}
                 className="ml-4"
               >
                 <Rocket className="h-4 w-4" />
@@ -55,10 +55,10 @@ export function FavoritesList({
           <Button
             variant="ghost"
             className="w-full justify-start text-muted-foreground hover:text-foreground"
-            onClick={onAddFavorite}
+            onClick={onAddSite}
           >
             <Plus className="h-4 w-4 mr-2" />
-            Add New Favorite
+            Add New Site
           </Button>
         </div>
       </CardContent>
