@@ -2,6 +2,8 @@
 
 A desktop application built with Tauri + React + TypeScript that provides an easy-to-use interface for managing browser proxy settings and launching browsers with specific proxy configurations.
 
+<img src="./docs/assets/screenshot-1.png" alt="Screenshot 1" width="500" />
+
 ## Project Purpose
 
 This application solves the following challenges:

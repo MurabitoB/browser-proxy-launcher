@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Github, ExternalLink } from "lucide-react";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 
 export default function About() {
   const router = useRouter();
@@ -41,7 +41,7 @@ export default function About() {
             <CardContent className="space-y-4">
               <div>
                 <h3 className="font-semibold mb-2 text-foreground">Version</h3>
-                <p className="text-muted-foreground">v0.1.0</p>
+                <p className="text-muted-foreground">v0.1.1</p>
               </div>
               <div>
                 <h3 className="font-semibold mb-2 text-foreground">
@@ -123,34 +123,6 @@ export default function About() {
             </CardContent>
           </Card>
 
-          {/* Links */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Links</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col gap-3">
-                <Button
-                  variant="outline"
-                  className="justify-start"
-                  onClick={() => window.open("https://github.com", "_blank")}
-                >
-                  <Github className="h-4 w-4 mr-2" />
-                  View on GitHub
-                </Button>
-                <Button
-                  variant="outline"
-                  className="justify-start"
-                  onClick={() =>
-                    window.open("https://github.com/issues", "_blank")
-                  }
-                >
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Report Issues
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

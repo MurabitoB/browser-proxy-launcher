@@ -1,4 +1,11 @@
 {
-  "enabledMcpjsonServers": ["shadcn"],
-  "enableAllProjectMcpServers": true
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "shadcn"
+  ],
+  "permissions": {
+    "allow": [
+      "Bash(mv:*)"
+    ]
+  }
 }

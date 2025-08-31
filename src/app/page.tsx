@@ -222,7 +222,7 @@ export default function HomePage() {
           onAboutClick={() => router.push("/about")}
         />
 
-        <div className="container mx-auto p-6 space-y-6 max-w-7xl">
+        <div className="container mx-auto px-6 pb-6 space-y-6 max-w-4xl">
           {/* Sites Section */}
           <SitesList
             sites={sites}

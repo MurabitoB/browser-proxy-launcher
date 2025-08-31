@@ -106,21 +106,23 @@ export function SettingsPage({
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="flex items-center gap-4 p-6 border-b">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onBack}
-          className="text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2 text-current" />
-          Back to Home
-        </Button>
-        <h1 className="text-2xl font-bold text-foreground">Settings</h1>
-      </header>
+      <div className="container mx-auto p-6 max-w-4xl">
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-6">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onBack}
+            className="text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Home
+          </Button>
+          <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+        </div>
 
-      <div className="container mx-auto p-6 space-y-6 max-w-4xl">
-        {/* Browser Configuration */}
+        <div className="space-y-6">
+          {/* Browser Configuration */}
         <Card>
           <CardHeader>
             <CardTitle>Browser Configuration</CardTitle>
@@ -286,6 +288,7 @@ export function SettingsPage({
             Cancel
           </Button>
           <Button onClick={handleSave}>Save Changes</Button>
+        </div>
         </div>
       </div>
     </div>
