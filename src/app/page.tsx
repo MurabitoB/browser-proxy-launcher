@@ -68,7 +68,7 @@ export default function HomePage() {
       setDeletingSite(null);
     } catch (error) {
       console.error("Failed to delete site:", error);
-      alert("刪除站點失敗，請稍後再試");
+      alert("Failed to delete site, please try again later");
     }
   };
 
@@ -100,7 +100,7 @@ export default function HomePage() {
       setDeletingProxy(null);
     } catch (error) {
       console.error("Failed to delete proxy:", error);
-      alert("刪除代理失敗，請稍後再試");
+      alert("Failed to delete proxy, please try again later");
     }
   };
 
@@ -119,7 +119,7 @@ export default function HomePage() {
     let updatedSettings;
 
     if (proxyId) {
-      // 編輯現有代理
+      // Edit existing proxy
       updatedSettings = {
         ...settings,
         proxies: settings.proxies.map((proxy) =>
@@ -127,7 +127,7 @@ export default function HomePage() {
         ),
       };
     } else {
-      // 新增代理
+      // Add new proxy
       const newProxy: ProxyConfig = {
         ...proxyData,
         id: Date.now().toString(),
@@ -147,7 +147,7 @@ export default function HomePage() {
       setEditingProxy(null);
     } catch (error) {
       console.error(`Failed to ${proxyId ? "update" : "add"} proxy:`, error);
-      alert(`${proxyId ? "更新" : "新增"}代理失敗，請稍後再試`);
+      alert(`Failed to ${proxyId ? "update" : "add"} proxy, please try again later`);
     }
   };
 
@@ -166,7 +166,7 @@ export default function HomePage() {
     let updatedSettings;
 
     if (siteId) {
-      // 編輯現有站點
+      // Edit existing site
       updatedSettings = {
         ...settings,
         sites: settings.sites.map((site) =>
@@ -174,7 +174,7 @@ export default function HomePage() {
         ),
       };
     } else {
-      // 新增站點
+      // Add new site
       const newSite: SiteConfig = {
         ...siteData,
         id: Date.now().toString(),
@@ -194,7 +194,7 @@ export default function HomePage() {
       setEditingSite(null);
     } catch (error) {
       console.error(`Failed to ${siteId ? "update" : "add"} site:`, error);
-      alert(`${siteId ? "更新" : "新增"}站點失敗，請稍後再試`);
+      alert(`Failed to ${siteId ? "update" : "add"} site, please try again later`);
     }
   };
 

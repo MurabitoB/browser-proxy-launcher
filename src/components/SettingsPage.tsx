@@ -78,7 +78,7 @@ export function SettingsPage({
       if (selectedPath) {
         const importedSettings = await TauriAPI.importSettings(selectedPath);
         setCurrentSettings(importedSettings);
-        // 也需要重新載入瀏覽器列表
+        // Also need to reload browser list
         if (onBrowserPathUpdated) {
           onBrowserPathUpdated();
         }

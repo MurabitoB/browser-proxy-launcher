@@ -48,11 +48,11 @@ const proxyFormSchema = z
   })
   .refine(
     (data) => {
-      // PAC 類型必須要有 URL
+      // PAC type requires URL
       if (data.type === "pac") {
         return data.url && data.url.trim().length > 0;
       }
-      // 非 PAC 類型必須要有 host 和 port
+      // Non-PAC types require host and port
       return data.host && data.host.trim().length > 0 && data.port;
     },
     {
@@ -67,7 +67,7 @@ interface ProxyDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   mode: "add" | "edit";
-  proxy?: ProxyConfig; // 編輯時傳入的代理配置
+  proxy?: ProxyConfig; // Proxy configuration passed when editing
   onSave: (proxyId: string | undefined, proxy: Omit<ProxyConfig, "id">) => void;
 }
 
@@ -93,7 +93,7 @@ export function ProxyDialog({
 
   const selectedType = form.watch("type");
 
-  // 當對話框開啟且有代理資料時，設定表單初始值
+  // Set form initial values when dialog opens and has proxy data
   useEffect(() => {
     if (open && mode === "edit" && proxy) {
       form.reset({
@@ -122,11 +122,11 @@ export function ProxyDialog({
     const proxyData: Omit<ProxyConfig, "id"> = {
       name: values.name,
       proxy_type: values.type,
-      host: values.type === "pac" ? "" : values.host || "", // PAC 類型不需要 host
-      port: values.type === "pac" ? 0 : values.port || 8080, // PAC 類型不需要 port
+      host: values.type === "pac" ? "" : values.host || "", // PAC type doesn't need host
+      port: values.type === "pac" ? 0 : values.port || 8080, // PAC type doesn't need port
       username: values.username || undefined,
       password: values.password || undefined,
-      ...(values.type === "pac" && values.url ? { url: values.url } : {}), // PAC 類型需要 url
+      ...(values.type === "pac" && values.url ? { url: values.url } : {}), // PAC type needs url
     };
 
     onSave(proxy?.id, proxyData);
@@ -182,7 +182,7 @@ export function ProxyDialog({
                       <Select
                         onValueChange={(value) => {
                           field.onChange(value);
-                          // 當切換到 PAC 類型時，清空 port 和 host
+                          // Clear port and host when switching to PAC type
                           if (value === "pac") {
                             form.setValue("port", undefined);
                             form.setValue("host", "");
