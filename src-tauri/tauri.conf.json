@@ -1,20 +1,22 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "browser-proxy-launcher",
+  "productName": "Browser Proxy Launcher",
   "version": "0.1.0",
   "identifier": "com.browser-proxy-launcher.app",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:3000",
     "beforeBuildCommand": "pnpm build",
-    "frontendDist": "../out"
+    "frontendDist": "../out",
+    "removeUnusedCommands": true
   },
   "app": {
     "windows": [
       {
-        "title": "browser-proxy-launcher",
-        "width": 800,
-        "height": 600
+        "title": "Browser Proxy Launcher",
+        "width": 500,
+        "height": 900,
+        "visible": true
       }
     ],
     "security": {

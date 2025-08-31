@@ -1,24 +1,32 @@
-import { SiteConfig } from "@/types";
+import { SiteConfig, Browser, ProxyConfig } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Rocket, Plus, ExternalLink } from "lucide-react";
+import { Rocket, Plus, ExternalLink, Edit, Trash2 } from "lucide-react";
 
 interface SitesListProps {
   sites: SiteConfig[];
+  browsers: Browser[];
+  proxies: ProxyConfig[];
   onLaunch: (site: SiteConfig) => void;
+  onEdit: (site: SiteConfig) => void;
+  onDelete: (siteId: string) => void;
   onAddSite: () => void;
 }
 
 export function SitesList({
   sites,
+  browsers,
+  proxies,
   onLaunch,
+  onEdit,
+  onDelete,
   onAddSite,
 }: SitesListProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Sites</CardTitle>
+        <CardTitle className="text-lg">Web Sites</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
@@ -32,24 +40,41 @@ export function SitesList({
                   <ExternalLink className="h-4 w-4 text-muted-foreground" />
                   <span className="font-medium">{site.name}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span>
-                    {site.browser.name}
-                  </span>
-                  {site.proxyId && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                  <span>{site.url}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="text-xs">
+                    {browsers.find((b) => b.id === site.browser_id)?.name ||
+                      "Unknown Browser"}
+                  </Badge>
+                  {site.proxy_id && (
                     <Badge variant="outline" className="text-xs">
-                      Proxy
+                      {proxies.find((p) => p.id === site.proxy_id)?.name ||
+                        "Unknown Proxy"}
                     </Badge>
                   )}
                 </div>
               </div>
-              <Button
-                size="sm"
-                onClick={() => onLaunch(site)}
-                className="ml-4"
-              >
-                <Rocket className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center gap-1 ml-4">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => onEdit(site)}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => onDelete(site.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+                <Button size="sm" onClick={() => onLaunch(site)}>
+                  <Rocket className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           ))}
           <Button

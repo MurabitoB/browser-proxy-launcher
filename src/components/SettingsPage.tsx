@@ -3,16 +3,25 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ArrowLeft, Folder } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { TauriAPI } from "@/lib/tauri-api";
+import { useSettingsPath } from "@/hooks/useSettings";
 
 interface SettingsPageProps {
   settings: AppSettings;
   browsers: Browser[];
   onBack: () => void;
   onSave: (settings: AppSettings) => void;
+  onBrowserPathUpdated?: () => void;
 }
 
 export function SettingsPage({
@@ -20,12 +29,75 @@ export function SettingsPage({
   browsers,
   onBack,
   onSave,
+  onBrowserPathUpdated,
 }: SettingsPageProps) {
   const [currentSettings, setCurrentSettings] = useState(settings);
+  const [currentBrowsers, setCurrentBrowsers] = useState(browsers);
   const { theme, setTheme } = useTheme();
+  const { data: settingsPath } = useSettingsPath();
+
+  const handleBrowseForBrowser = async (browserId: string) => {
+    try {
+      const selectedPath = await TauriAPI.browseForBrowserExecutable();
+      if (selectedPath) {
+        // Update the browser path in local state only
+        setCurrentBrowsers((prevBrowsers) =>
+          prevBrowsers.map((browser) =>
+            browser.id === browserId
+              ? { ...browser, path: selectedPath }
+              : browser
+          )
+        );
+
+        console.log(`Updated browser ${browserId} path to:`, selectedPath);
+      }
+    } catch (error) {
+      console.error("Failed to browse for browser:", error);
+      alert(`Failed to select browser path: ${error}`);
+    }
+  };
+
+  const handleExportSettings = async () => {
+    try {
+      const selectedPath = await TauriAPI.browseSaveFile(
+        "browser-proxy-settings.json"
+      );
+      if (selectedPath) {
+        await TauriAPI.exportSettings(selectedPath);
+        alert(`Settings exported successfully to: ${selectedPath}`);
+      }
+    } catch (error) {
+      console.error("Failed to export settings:", error);
+      alert(`Failed to export settings: ${error}`);
+    }
+  };
+
+  const handleImportSettings = async () => {
+    try {
+      const selectedPath = await TauriAPI.browseOpenFile(["json"]);
+      if (selectedPath) {
+        const importedSettings = await TauriAPI.importSettings(selectedPath);
+        setCurrentSettings(importedSettings);
+        // 也需要重新載入瀏覽器列表
+        if (onBrowserPathUpdated) {
+          onBrowserPathUpdated();
+        }
+        alert(`Settings imported successfully from: ${selectedPath}`);
+      }
+    } catch (error) {
+      console.error("Failed to import settings:", error);
+      alert(`Failed to import settings: ${error}`);
+    }
+  };
 
   const handleSave = () => {
-    onSave(currentSettings);
+    // Update the settings with current browser paths
+    const updatedSettings = {
+      ...currentSettings,
+      // We don't directly store browser paths in settings, but the save operation
+      // will save all current state including browser changes made through the backend
+    };
+    onSave(updatedSettings);
   };
 
   const updateSetting = (key: keyof AppSettings, value: any) => {
@@ -35,8 +107,13 @@ export function SettingsPage({
   return (
     <div className="min-h-screen bg-background">
       <header className="flex items-center gap-4 p-6 border-b">
-        <Button variant="ghost" size="sm" onClick={onBack}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onBack}
+          className="text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2 text-current" />
           Back to Home
         </Button>
         <h1 className="text-2xl font-bold text-foreground">Settings</h1>
@@ -50,20 +127,20 @@ export function SettingsPage({
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="text-sm font-medium mb-2 block">
+              <label className="text-sm font-medium text-foreground mb-2 block">
                 Default Browser:
               </label>
               <Select
-                value={currentSettings.defaultBrowser}
+                value={currentSettings.default_browser}
                 onValueChange={(value) =>
-                  updateSetting("defaultBrowser", value)
+                  updateSetting("default_browser", value)
                 }
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a browser" />
                 </SelectTrigger>
                 <SelectContent>
-                  {browsers.map((browser) => (
+                  {currentBrowsers.map((browser) => (
                     <SelectItem key={browser.id} value={browser.id}>
                       {browser.name}
                     </SelectItem>
@@ -73,17 +150,23 @@ export function SettingsPage({
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-2 block">
+              <label className="text-sm font-medium text-foreground mb-2 block">
                 Browser Paths:
               </label>
               <div className="space-y-3">
-                {browsers.map((browser) => (
+                {currentBrowsers.map((browser) => (
                   <div key={browser.id} className="flex items-center gap-2">
-                    <span className="w-16 text-sm">{browser.name}:</span>
+                    <span className="w-28 text-sm text-foreground">
+                      {browser.name}:
+                    </span>
                     <Input value={browser.path} readOnly className="flex-1" />
-                    <Button variant="outline" size="sm">
-                      <Folder className="h-4 w-4 mr-2" />
-                      Browse...
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleBrowseForBrowser(browser.id)}
+                    >
+                      <Folder className="h-4 w-4 mr-2 text-current" />
+                      Browse
                     </Button>
                   </div>
                 ))}
@@ -92,31 +175,35 @@ export function SettingsPage({
 
             <div className="flex items-center gap-2">
               <Switch id="autoDetect" defaultChecked />
-              <label htmlFor="autoDetect" className="text-sm">
+              <label htmlFor="autoDetect" className="text-sm text-foreground">
                 Auto-detect browser installations
               </label>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Proxy Configuration */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Proxy Configuration</CardTitle>
-          </CardHeader>
-          <CardContent>
             <div className="flex items-center gap-2">
               <Switch
-                id="autoTest"
-                checked={currentSettings.autoTestProxies}
+                id="ignore_cert_errors"
+                checked={currentSettings.ignore_cert_errors}
                 onCheckedChange={(checked) =>
-                  updateSetting("autoTestProxies", checked)
+                  updateSetting("ignore_cert_errors", checked)
                 }
               />
-              <label htmlFor="autoTest" className="text-sm">
-                Auto-test proxies on startup
+              <label
+                htmlFor="ignoreCertErrors"
+                className="text-sm text-foreground"
+              >
+                Ignore certificate errors
               </label>
             </div>
+
+            {currentBrowsers.length === 0 && (
+              <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  No browsers detected. Please install Chrome or Edge, or
+                  manually configure browser paths.
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -127,7 +214,9 @@ export function SettingsPage({
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="text-sm font-medium mb-2 block">Theme:</label>
+              <label className="text-sm font-medium text-foreground mb-2 block">
+                Theme:
+              </label>
               <Select
                 value={theme}
                 onValueChange={(value) =>
@@ -148,57 +237,19 @@ export function SettingsPage({
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Switch
-                  id="launchStartup"
-                  checked={currentSettings.launchOnStartup}
+                  id="launch_on_startup"
+                  checked={currentSettings.launch_on_startup}
                   onCheckedChange={(checked) =>
-                    updateSetting("launchOnStartup", checked)
+                    updateSetting("launch_on_startup", checked)
                   }
                 />
-                <label htmlFor="launchStartup" className="text-sm">
+                <label
+                  htmlFor="launchStartup"
+                  className="text-sm text-foreground"
+                >
                   Launch on system startup
                 </label>
               </div>
-
-              <div className="flex items-center gap-2">
-                <Switch
-                  id="minimizeTray"
-                  checked={currentSettings.minimizeToTray}
-                  onCheckedChange={(checked) =>
-                    updateSetting("minimizeToTray", checked)
-                  }
-                />
-                <label htmlFor="minimizeTray" className="text-sm">
-                  Minimize to system tray
-                </label>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Switch
-                  id="closeTray"
-                  checked={currentSettings.closeToTray}
-                  onCheckedChange={(checked) =>
-                    updateSetting("closeToTray", checked)
-                  }
-                />
-                <label htmlFor="closeTray" className="text-sm">
-                  Close to system tray
-                </label>
-              </div>
-            </div>
-
-
-            <div>
-              <label className="text-sm font-medium mb-2 block">
-                Max recent items:
-              </label>
-              <Input
-                type="number"
-                value={currentSettings.maxRecentItems}
-                onChange={(e) =>
-                  updateSetting("maxRecentItems", parseInt(e.target.value))
-                }
-                className="w-20"
-              />
             </div>
           </CardContent>
         </Card>
@@ -210,17 +261,20 @@ export function SettingsPage({
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex gap-2">
-              <Button variant="outline">Export Settings...</Button>
-              <Button variant="outline">Import Settings...</Button>
-              <Button variant="outline">Reset to Defaults...</Button>
+              <Button variant="outline" onClick={handleExportSettings}>
+                Export
+              </Button>
+              <Button variant="outline" onClick={handleImportSettings}>
+                Import
+              </Button>
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-2 block">
+              <label className="text-sm font-medium text-foreground mb-2 block">
                 Storage Location:
               </label>
               <div className="text-sm text-muted-foreground font-mono p-2 bg-muted rounded">
-                ~/.browser-proxy-launcher/
+                {settingsPath || "~/.browser-proxy-launcher/"}
               </div>
             </div>
           </CardContent>

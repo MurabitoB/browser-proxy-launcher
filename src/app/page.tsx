@@ -3,75 +3,309 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/Header";
-import { ProxyStatus } from "@/components/ProxyStatus";
 import { SitesList } from "@/components/SitesList";
 import { ProxyList } from "@/components/ProxyList";
-import { mockProxies, mockSites } from "@/lib/mock-data";
+import { SiteDialog } from "@/components/SiteDialog";
+import { ProxyDialog } from "@/components/ProxyDialog";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { TrayManager } from "@/components/TrayManager";
+import { TauriAPI } from "@/lib/tauri-api";
 import { ProxyConfig, SiteConfig } from "@/types";
+import { useAppData } from "@/hooks/useAppData";
+import { useSaveSettings } from "@/hooks/useSettings";
 
 export default function HomePage() {
   const router = useRouter();
-  const [proxies, setProxies] = useState<ProxyConfig[]>(mockProxies);
-  const [sites, setSites] = useState<SiteConfig[]>(mockSites);
+  const { settings, browsers, sites, proxies, isLoading, error } = useAppData();
+  const saveSettingsMutation = useSaveSettings();
+  const [showSiteDialog, setShowSiteDialog] = useState(false);
+  const [siteDialogMode, setSiteDialogMode] = useState<"add" | "edit">("add");
+  const [editingSite, setEditingSite] = useState<SiteConfig | null>(null);
+  const [showProxyDialog, setShowProxyDialog] = useState(false);
+  const [proxyDialogMode, setProxyDialogMode] = useState<"add" | "edit">("add");
+  const [editingProxy, setEditingProxy] = useState<ProxyConfig | null>(null);
 
-  const proxyStatus = {
-    configured: proxies.length,
-    active: proxies.filter((p) => p.isActive).length,
-    lastTested: new Date().toISOString(),
+  // Delete confirmation states
+  const [showDeleteSiteDialog, setShowDeleteSiteDialog] = useState(false);
+  const [showDeleteProxyDialog, setShowDeleteProxyDialog] = useState(false);
+  const [deletingSite, setDeletingSite] = useState<SiteConfig | null>(null);
+  const [deletingProxy, setDeletingProxy] = useState<ProxyConfig | null>(null);
+
+  const handleLaunchSite = async (site: SiteConfig) => {
+    try {
+      console.log("Launching site:", site);
+      await TauriAPI.launchSite(site.id);
+    } catch (error) {
+      console.error("Failed to launch site:", error);
+    }
   };
 
-  const handleLaunchSite = (site: SiteConfig) => {
-    console.log("Launching:", site);
-    // TODO: 實際啟動邏輯
+  const handleEditSite = (site: SiteConfig) => {
+    setEditingSite(site);
+    setSiteDialogMode("edit");
+    setShowSiteDialog(true);
+  };
+
+  const handleDeleteSite = (siteId: string) => {
+    const site = sites.find((s) => s.id === siteId);
+    if (site) {
+      setDeletingSite(site);
+      setShowDeleteSiteDialog(true);
+    }
+  };
+
+  const confirmDeleteSite = async () => {
+    if (!settings || !deletingSite) return;
+
+    const updatedSettings = {
+      ...settings,
+      sites: settings.sites.filter((s) => s.id !== deletingSite.id),
+    };
+
+    try {
+      await saveSettingsMutation.mutateAsync(updatedSettings);
+      console.log("Site deleted successfully");
+      setDeletingSite(null);
+    } catch (error) {
+      console.error("Failed to delete site:", error);
+      alert("刪除站點失敗，請稍後再試");
+    }
   };
 
   const handleEditProxy = (proxy: ProxyConfig) => {
-    console.log("Editing proxy:", proxy);
-    // TODO: 顯示編輯對話框
+    setEditingProxy(proxy);
+    setProxyDialogMode("edit");
+    setShowProxyDialog(true);
   };
 
   const handleDeleteProxy = (proxyId: string) => {
-    setProxies((prev) => prev.filter((p) => p.id !== proxyId));
+    const proxy = proxies.find((p) => p.id === proxyId);
+    if (proxy) {
+      setDeletingProxy(proxy);
+      setShowDeleteProxyDialog(true);
+    }
+  };
+
+  const confirmDeleteProxy = async () => {
+    if (!settings || !deletingProxy) return;
+
+    const updatedSettings = {
+      ...settings,
+      proxies: settings.proxies.filter((p) => p.id !== deletingProxy.id),
+    };
+
+    try {
+      await saveSettingsMutation.mutateAsync(updatedSettings);
+      console.log("Proxy deleted successfully");
+      setDeletingProxy(null);
+    } catch (error) {
+      console.error("Failed to delete proxy:", error);
+      alert("刪除代理失敗，請稍後再試");
+    }
   };
 
   const handleAddProxy = () => {
-    console.log("Adding new proxy");
-    // TODO: 顯示新增對話框
+    setEditingProxy(null);
+    setProxyDialogMode("add");
+    setShowProxyDialog(true);
+  };
+
+  const handleSaveProxy = async (
+    proxyId: string | undefined,
+    proxyData: Omit<ProxyConfig, "id">
+  ) => {
+    if (!settings) return;
+
+    let updatedSettings;
+
+    if (proxyId) {
+      // 編輯現有代理
+      updatedSettings = {
+        ...settings,
+        proxies: settings.proxies.map((proxy) =>
+          proxy.id === proxyId ? { ...proxyData, id: proxyId } : proxy
+        ),
+      };
+    } else {
+      // 新增代理
+      const newProxy: ProxyConfig = {
+        ...proxyData,
+        id: Date.now().toString(),
+      };
+      updatedSettings = {
+        ...settings,
+        proxies: [...settings.proxies, newProxy],
+      };
+    }
+
+    try {
+      console.log("Attempting to save settings:", updatedSettings);
+      await saveSettingsMutation.mutateAsync(updatedSettings);
+      console.log(
+        proxyId ? "Proxy updated successfully" : "Proxy added successfully"
+      );
+      setEditingProxy(null);
+    } catch (error) {
+      console.error(`Failed to ${proxyId ? "update" : "add"} proxy:`, error);
+      alert(`${proxyId ? "更新" : "新增"}代理失敗，請稍後再試`);
+    }
   };
 
   const handleAddSite = () => {
-    console.log("Adding new site");
-    // TODO: 顯示新增對話框
+    setEditingSite(null);
+    setSiteDialogMode("add");
+    setShowSiteDialog(true);
   };
 
-  return (
-    <div className="min-h-screen bg-background">
-      <Header
-        onSettingsClick={() => router.push("/settings")}
-        onAboutClick={() => router.push("/about")}
-      />
+  const handleSaveSite = async (
+    siteId: string | undefined,
+    siteData: Omit<SiteConfig, "id">
+  ) => {
+    if (!settings) return;
 
-      <div className="container mx-auto p-6 space-y-6 max-w-7xl">
-        {/* Proxy Status */}
-        <div className="max-w-md">
-          <ProxyStatus status={proxyStatus} />
+    let updatedSettings;
+
+    if (siteId) {
+      // 編輯現有站點
+      updatedSettings = {
+        ...settings,
+        sites: settings.sites.map((site) =>
+          site.id === siteId ? { ...siteData, id: siteId } : site
+        ),
+      };
+    } else {
+      // 新增站點
+      const newSite: SiteConfig = {
+        ...siteData,
+        id: Date.now().toString(),
+      };
+      updatedSettings = {
+        ...settings,
+        sites: [...settings.sites, newSite],
+      };
+    }
+
+    try {
+      console.log("Attempting to save site settings:", updatedSettings);
+      await saveSettingsMutation.mutateAsync(updatedSettings);
+      console.log(
+        siteId ? "Site updated successfully" : "Site added successfully"
+      );
+      setEditingSite(null);
+    } catch (error) {
+      console.error(`Failed to ${siteId ? "update" : "add"} site:`, error);
+      alert(`${siteId ? "更新" : "新增"}站點失敗，請稍後再試`);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading application...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error("Loading error:", error);
+    // Continue with fallback behavior instead of showing error screen
+  }
+
+  return (
+    <TrayManager>
+      <div className="min-h-screen bg-background">
+        <Header
+          onSettingsClick={() => router.push("/settings")}
+          onAboutClick={() => router.push("/about")}
+        />
+
+        <div className="container mx-auto p-6 space-y-6 max-w-7xl">
+          {/* Sites Section */}
+          <SitesList
+            sites={sites}
+            browsers={browsers}
+            proxies={proxies}
+            onLaunch={handleLaunchSite}
+            onEdit={handleEditSite}
+            onDelete={handleDeleteSite}
+            onAddSite={handleAddSite}
+          />
+
+          {/* Proxy Management Section */}
+          <ProxyList
+            proxies={proxies}
+            onEdit={handleEditProxy}
+            onDelete={handleDeleteProxy}
+            onAddProxy={handleAddProxy}
+          />
+
+          {/* Empty State */}
+          {sites.length === 0 && proxies.length === 0 && (
+            <div className="text-center py-12">
+              <div className="text-muted-foreground mb-4">
+                <p>Welcome to Browser Proxy Launcher!</p>
+                <p className="text-sm">
+                  Add some sites and proxies to get started.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Sites Section */}
-        <SitesList
-          sites={sites}
-          onLaunch={handleLaunchSite}
-          onAddSite={handleAddSite}
+        <SiteDialog
+          open={showSiteDialog}
+          onOpenChange={setShowSiteDialog}
+          mode={siteDialogMode}
+          site={editingSite || undefined}
+          onSave={handleSaveSite}
+          proxies={proxies}
+          browsers={browsers}
+          defaultBrowser={settings?.default_browser}
         />
 
-        {/* Proxy Management Section */}
-        <ProxyList
-          proxies={proxies}
-          onEdit={handleEditProxy}
-          onDelete={handleDeleteProxy}
-          onAddProxy={handleAddProxy}
+        <ProxyDialog
+          open={showProxyDialog}
+          onOpenChange={setShowProxyDialog}
+          mode={proxyDialogMode}
+          proxy={editingProxy || undefined}
+          onSave={handleSaveProxy}
+        />
+
+        <ConfirmDialog
+          open={showDeleteSiteDialog}
+          onOpenChange={(open) => {
+            setShowDeleteSiteDialog(open);
+            if (!open) {
+              setDeletingSite(null);
+            }
+          }}
+          title="Delete Site"
+          description={`Are you sure you want to delete "${deletingSite?.name}" site? This action cannot be undone.`}
+          onConfirm={confirmDeleteSite}
+          confirmText="Delete"
+          cancelText="Cancel"
+          variant="destructive"
+        />
+
+        <ConfirmDialog
+          open={showDeleteProxyDialog}
+          onOpenChange={(open) => {
+            setShowDeleteProxyDialog(open);
+            if (!open) {
+              setDeletingProxy(null);
+            }
+          }}
+          title="Delete Proxy"
+          description={`Are you sure you want to delete "${deletingProxy?.name}" proxy? This action cannot be undone.`}
+          onConfirm={confirmDeleteProxy}
+          confirmText="Delete"
+          cancelText="Cancel"
+          variant="destructive"
         />
       </div>
-    </div>
+    </TrayManager>
   );
 }

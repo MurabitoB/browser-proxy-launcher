@@ -1,0 +1,10 @@
+services:
+  3proxy:
+    image: 3proxy/3proxy:latest
+    container_name: 3proxy
+    ports:
+      - "8080:8080" # HTTP proxy
+      - "1080:1080" # SOCKS5 proxy
+    volumes:
+      - ./:/usr/local/3proxy/conf
+    restart: unless-stopped

@@ -2,7 +2,7 @@ import { ProxyConfig } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Server, Plus, Edit, Trash2, Circle } from "lucide-react";
+import { Server, Plus, Edit, Trash2 } from "lucide-react";
 
 interface ProxyListProps {
   proxies: ProxyConfig[];
@@ -33,16 +33,13 @@ export function ProxyList({
                 <div className="flex items-center gap-2 mb-1">
                   <Server className="h-4 w-4 text-muted-foreground" />
                   <span className="font-medium">{proxy.name}</span>
-                  <Badge
-                    variant={proxy.isActive ? "success" : "secondary"}
-                    className="text-xs"
-                  >
-                    <Circle className="h-2 w-2 mr-1 fill-current" />
-                    {proxy.isActive ? "Active" : "Inactive"}
-                  </Badge>
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  {proxy.type.toUpperCase()}://{proxy.host}:{proxy.port}
+                  {proxy.proxy_type === "pac"
+                    ? `PAC: ${proxy.url || "No URL configured"}`
+                    : `${proxy.proxy_type.toUpperCase()}://${proxy.host}:${
+                        proxy.port
+                      }`}
                   {proxy.username && (
                     <Badge variant="outline" className="ml-2 text-xs">
                       Auth
@@ -50,13 +47,17 @@ export function ProxyList({
                   )}
                 </div>
               </div>
-              <div className="flex gap-1 ml-4">
-                <Button size="sm" variant="ghost" onClick={() => onEdit(proxy)}>
+              <div className="flex items-center gap-1 ml-4">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => onEdit(proxy)}
+                >
                   <Edit className="h-4 w-4" />
                 </Button>
                 <Button
                   size="sm"
-                  variant="ghost"
+                  variant="outline"
                   onClick={() => onDelete(proxy.id)}
                 >
                   <Trash2 className="h-4 w-4" />

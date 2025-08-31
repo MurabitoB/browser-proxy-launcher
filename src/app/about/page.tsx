@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Github, ExternalLink, Heart } from "lucide-react";
+import { ArrowLeft, Github, ExternalLink } from "lucide-react";
 
 export default function About() {
   const router = useRouter();
@@ -17,7 +17,12 @@ export default function About() {
       <div className="container mx-auto p-6 max-w-4xl">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" size="sm" onClick={handleBack}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-foreground"
+            onClick={handleBack}
+          >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Button>
@@ -44,9 +49,9 @@ export default function About() {
                 </h3>
                 <p className="text-muted-foreground">
                   A desktop application for easily launching browsers with proxy
-                  configurations. Manage multiple proxies, save your sites,
-                  and launch them with different browsers and proxy
-                  settings with just one click.
+                  configurations. Manage multiple proxies, save your sites, and
+                  launch them with different browsers and proxy settings with
+                  just one click.
                 </p>
               </div>
             </CardContent>
@@ -65,15 +70,11 @@ export default function About() {
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-green-500">✓</span>
-                  HTTP, HTTPS, and SOCKS5 proxy support
+                  HTTP, SOCKS5, and PAC proxy support
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-green-500">✓</span>
                   Sites management with proxy binding
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
-                  Proxy status monitoring
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-green-500">✓</span>
@@ -148,22 +149,6 @@ export default function About() {
                   Report Issues
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Credits */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Heart className="h-5 w-5 text-red-500" />
-                Credits
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                Made with ❤️ for easier browser and proxy management. Special
-                thanks to all the open-source projects that made this possible.
-              </p>
             </CardContent>
           </Card>
         </div>

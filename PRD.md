@@ -9,6 +9,7 @@ This is a Product Requirements Document (PRD) for the Browser Proxy Launcher pro
 - Provide a seamless user experience for launching browser with proxy arguments.
 - Support multiple proxy providers and configurations.
 - Support multi-browser setups (e.g., Chrome, Edge).
+- 1 User Profile for each proxy setting
 
 ## Features
 

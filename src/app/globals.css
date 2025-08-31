@@ -33,7 +33,7 @@
   --sidebar-accent-foreground: hsl(240 5.9% 10%);
   --sidebar-border: hsl(240 5.9% 90%);
   --sidebar-ring: hsl(240 4.9% 83.9%);
-  --background: hsl(0 0% 100%);
+  --background: hsl(240 5% 96%);
   --foreground: hsl(240 10% 3.9%);
 }
 
@@ -109,4 +109,173 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* Custom Dialog styles for better dark mode support */
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: hsl(240 5% 64.9%) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: hsl(240 3.8% 46.1%) !important;
+}
+
+/* More specific selectors for form inputs */
+.dark [data-radix-dialog-content] input::placeholder,
+.dark [data-radix-dialog-content] textarea::placeholder {
+  color: hsl(240 5% 64.9%) !important;
+}
+
+[data-radix-dialog-content] input::placeholder,
+[data-radix-dialog-content] textarea::placeholder {
+  color: hsl(240 3.8% 46.1%) !important;
+}
+
+/* Dialog title and close button styles */
+[data-radix-dialog-content] [data-radix-dialog-title] {
+  color: var(--foreground) !important;
+}
+
+[data-radix-dialog-content] [data-radix-dialog-close] {
+  color: var(--foreground) !important;
+}
+
+/* More specific selectors for dialog close button */
+.dark [data-radix-dialog-content] button[data-radix-dialog-close] {
+  color: hsl(0 0% 98%) !important;
+}
+
+[data-radix-dialog-content] button[data-radix-dialog-close] {
+  color: var(--foreground) !important;
+}
+
+/* Dialog close button icon */
+.dark [data-radix-dialog-content] button[data-radix-dialog-close] svg {
+  color: hsl(0 0% 98%) !important;
+}
+
+[data-radix-dialog-content] button[data-radix-dialog-close] svg {
+  color: var(--foreground) !important;
+}
+
+/* Ensure DialogDescription is visible in dark mode */
+[data-radix-dialog-content] [data-radix-dialog-description] {
+  color: var(--muted-foreground) !important;
+}
+
+/* Additional fallback for input placeholders */
+* input::placeholder {
+  color: var(--muted-foreground) !important;
+}
+
+.dark * input::placeholder {
+  color: hsl(240 5% 64.9%) !important;
+}
+
+/* Fix input text color in dark mode */
+.dark input {
+  color: var(--foreground) !important;
+}
+
+input {
+  color: var(--foreground) !important;
+}
+
+/* Fix select option colors */
+.dark select,
+.dark [data-radix-select-content],
+.dark [data-radix-select-item] {
+  color: var(--foreground) !important;
+  background-color: var(--popover) !important;
+}
+
+select,
+[data-radix-select-content],
+[data-radix-select-item] {
+  color: var(--foreground) !important;
+  background-color: var(--popover) !important;
+}
+
+/* Fix cursor styles for Tauri */
+button,
+[role="button"],
+[data-slot="button"],
+.btn,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  cursor: pointer !important;
+}
+
+button:disabled,
+[role="button"]:disabled,
+[data-slot="button"]:disabled,
+.btn:disabled,
+input[type="button"]:disabled,
+input[type="submit"]:disabled,
+input[type="reset"]:disabled {
+  cursor: not-allowed !important;
+}
+
+/* Interactive elements cursor fix */
+a,
+[role="link"],
+[data-radix-dialog-close],
+[data-radix-dialog-trigger],
+[data-radix-select-trigger],
+select,
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+/* Input elements cursor */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="url"],
+textarea {
+  cursor: text !important;
+}
+
+input[type="text"]:disabled,
+input[type="password"]:disabled,
+input[type="email"]:disabled,
+input[type="number"]:disabled,
+input[type="url"]:disabled,
+textarea:disabled {
+  cursor: not-allowed !important;
+}
+
+/* Tauri specific cursor fixes */
+* {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input,
+textarea,
+[contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Force cursor styles for common UI elements */
+.cursor-pointer,
+button,
+[type="button"],
+[type="submit"],
+[type="reset"],
+[role="button"],
+a:not([disabled]),
+[tabindex]:not([tabindex="-1"]):not([disabled]) {
+  cursor: pointer !important;
+  -webkit-app-region: no-drag;
+}
+
+/* Ensure body allows cursor changes */
+body {
+  -webkit-app-region: no-drag;
 }

@@ -15,6 +15,10 @@ const nextConfig = {
   assetPrefix: isProd ? undefined : `http://${internalHost}:3000`,
   // Set output file tracing root to silence warning
   outputFileTracingRoot: process.cwd(),
+  // Disable generation of not-found page for static export
+  generateEtags: false,
+  // Skip trailing slash for Tauri compatibility
+  trailingSlash: false,
 };
 
 export default nextConfig;
