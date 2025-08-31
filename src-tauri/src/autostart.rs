@@ -38,6 +38,12 @@ impl AutoStartManager {
     }
 
     pub fn disable(&self) -> Result<(), Box<dyn std::error::Error>> {
+        // Check if auto-start is currently enabled before attempting to disable
+        if !self.is_enabled()? {
+            println!("Auto-start is already disabled, no action needed");
+            return Ok(());
+        }
+
         self.auto_launch.disable()?;
         println!("Auto-start disabled successfully");
         Ok(())
