@@ -41,7 +41,7 @@ export default function About() {
             <CardContent className="space-y-4">
               <div>
                 <h3 className="font-semibold mb-2 text-foreground">Version</h3>
-                <p className="text-muted-foreground">v0.1.2</p>
+                <p className="text-muted-foreground">v0.1.3</p>
               </div>
               <div>
                 <h3 className="font-semibold mb-2 text-foreground">

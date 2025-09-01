@@ -8,7 +8,6 @@ import { ProxyList } from "@/components/ProxyList";
 import { SiteDialog } from "@/components/SiteDialog";
 import { ProxyDialog } from "@/components/ProxyDialog";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
-import { TrayManager } from "@/components/TrayManager";
 import { TauriAPI } from "@/lib/tauri-api";
 import { ProxyConfig, SiteConfig } from "@/types";
 import { useAppData } from "@/hooks/useAppData";
@@ -156,7 +155,9 @@ export default function HomePage() {
       setEditingProxy(null);
     } catch (error) {
       console.error(`Failed to ${proxyId ? "update" : "add"} proxy:`, error);
-      alert(`Failed to ${proxyId ? "update" : "add"} proxy, please try again later`);
+      alert(
+        `Failed to ${proxyId ? "update" : "add"} proxy, please try again later`
+      );
     }
   };
 
@@ -203,7 +204,9 @@ export default function HomePage() {
       setEditingSite(null);
     } catch (error) {
       console.error(`Failed to ${siteId ? "update" : "add"} site:`, error);
-      alert(`Failed to ${siteId ? "update" : "add"} site, please try again later`);
+      alert(
+        `Failed to ${siteId ? "update" : "add"} site, please try again later`
+      );
     }
   };
 
@@ -224,98 +227,96 @@ export default function HomePage() {
   }
 
   return (
-    <TrayManager>
-      <div className="min-h-screen bg-background">
-        <Header
-          onSettingsClick={() => router.push("/settings")}
-          onAboutClick={() => router.push("/about")}
-        />
+    <div className="min-h-screen bg-background">
+      <Header
+        onSettingsClick={() => router.push("/settings")}
+        onAboutClick={() => router.push("/about")}
+      />
 
-        <div className="container mx-auto px-6 pb-6 space-y-6 max-w-4xl">
-          {/* Sites Section */}
-          <SitesList
-            sites={sites}
-            browsers={browsers}
-            proxies={proxies}
-            onLaunch={handleLaunchSite}
-            onEdit={handleEditSite}
-            onDelete={handleDeleteSite}
-            onAddSite={handleAddSite}
-          />
-
-          {/* Proxy Management Section */}
-          <ProxyList
-            proxies={proxies}
-            onLaunch={handleLaunchProxy}
-            onEdit={handleEditProxy}
-            onDelete={handleDeleteProxy}
-            onAddProxy={handleAddProxy}
-          />
-
-          {/* Empty State */}
-          {sites.length === 0 && proxies.length === 0 && (
-            <div className="text-center py-12">
-              <div className="text-muted-foreground mb-4">
-                <p>Welcome to Browser Proxy Launcher!</p>
-                <p className="text-sm">
-                  Add some sites and proxies to get started.
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <SiteDialog
-          open={showSiteDialog}
-          onOpenChange={setShowSiteDialog}
-          mode={siteDialogMode}
-          site={editingSite || undefined}
-          onSave={handleSaveSite}
-          proxies={proxies}
+      <div className="container mx-auto px-6 pb-6 space-y-6 max-w-4xl">
+        {/* Sites Section */}
+        <SitesList
+          sites={sites}
           browsers={browsers}
-          defaultBrowser={settings?.default_browser}
+          proxies={proxies}
+          onLaunch={handleLaunchSite}
+          onEdit={handleEditSite}
+          onDelete={handleDeleteSite}
+          onAddSite={handleAddSite}
         />
 
-        <ProxyDialog
-          open={showProxyDialog}
-          onOpenChange={setShowProxyDialog}
-          mode={proxyDialogMode}
-          proxy={editingProxy || undefined}
-          onSave={handleSaveProxy}
+        {/* Proxy Management Section */}
+        <ProxyList
+          proxies={proxies}
+          onLaunch={handleLaunchProxy}
+          onEdit={handleEditProxy}
+          onDelete={handleDeleteProxy}
+          onAddProxy={handleAddProxy}
         />
 
-        <ConfirmDialog
-          open={showDeleteSiteDialog}
-          onOpenChange={(open) => {
-            setShowDeleteSiteDialog(open);
-            if (!open) {
-              setDeletingSite(null);
-            }
-          }}
-          title="Delete Site"
-          description={`Are you sure you want to delete "${deletingSite?.name}" site? This action cannot be undone.`}
-          onConfirm={confirmDeleteSite}
-          confirmText="Delete"
-          cancelText="Cancel"
-          variant="destructive"
-        />
-
-        <ConfirmDialog
-          open={showDeleteProxyDialog}
-          onOpenChange={(open) => {
-            setShowDeleteProxyDialog(open);
-            if (!open) {
-              setDeletingProxy(null);
-            }
-          }}
-          title="Delete Proxy"
-          description={`Are you sure you want to delete "${deletingProxy?.name}" proxy? This action cannot be undone.`}
-          onConfirm={confirmDeleteProxy}
-          confirmText="Delete"
-          cancelText="Cancel"
-          variant="destructive"
-        />
+        {/* Empty State */}
+        {sites.length === 0 && proxies.length === 0 && (
+          <div className="text-center py-12">
+            <div className="text-muted-foreground mb-4">
+              <p>Welcome to Browser Proxy Launcher!</p>
+              <p className="text-sm">
+                Add some sites and proxies to get started.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
-    </TrayManager>
+
+      <SiteDialog
+        open={showSiteDialog}
+        onOpenChange={setShowSiteDialog}
+        mode={siteDialogMode}
+        site={editingSite || undefined}
+        onSave={handleSaveSite}
+        proxies={proxies}
+        browsers={browsers}
+        defaultBrowser={settings?.default_browser}
+      />
+
+      <ProxyDialog
+        open={showProxyDialog}
+        onOpenChange={setShowProxyDialog}
+        mode={proxyDialogMode}
+        proxy={editingProxy || undefined}
+        onSave={handleSaveProxy}
+      />
+
+      <ConfirmDialog
+        open={showDeleteSiteDialog}
+        onOpenChange={(open) => {
+          setShowDeleteSiteDialog(open);
+          if (!open) {
+            setDeletingSite(null);
+          }
+        }}
+        title="Delete Site"
+        description={`Are you sure you want to delete "${deletingSite?.name}" site? This action cannot be undone.`}
+        onConfirm={confirmDeleteSite}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
+
+      <ConfirmDialog
+        open={showDeleteProxyDialog}
+        onOpenChange={(open) => {
+          setShowDeleteProxyDialog(open);
+          if (!open) {
+            setDeletingProxy(null);
+          }
+        }}
+        title="Delete Proxy"
+        description={`Are you sure you want to delete "${deletingProxy?.name}" proxy? This action cannot be undone.`}
+        onConfirm={confirmDeleteProxy}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
+    </div>
   );
 }

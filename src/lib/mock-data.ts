@@ -64,6 +64,7 @@ export const mockSites: SiteConfig[] = [
 
 export const mockSettings: AppSettings = {
   default_browser: "chrome",
+  default_launch_url: "https://www.google.com",
   theme: "system",
   launch_on_startup: false,
   ignore_cert_errors: false,

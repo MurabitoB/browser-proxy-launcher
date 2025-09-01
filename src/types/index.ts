@@ -25,6 +25,7 @@ export interface Browser {
 
 export interface AppSettings {
   default_browser: string;
+  default_launch_url: string;
   theme: "light" | "dark" | "system";
   launch_on_startup: boolean;
   ignore_cert_errors: boolean;

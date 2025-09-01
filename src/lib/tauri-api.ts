@@ -28,6 +28,7 @@ export interface TauriSiteConfig {
 
 export interface TauriAppSettings {
   default_browser: string
+  default_launch_url: string
   theme: string
   launch_on_startup: boolean
   ignore_cert_errors: boolean
@@ -74,6 +75,7 @@ export class TauriAPI {
       const settings = await invoke<TauriAppSettings>('load_settings')
       return {
         default_browser: settings.default_browser,
+        default_launch_url: settings.default_launch_url,
         theme: settings.theme as "light" | "dark" | "system",
         launch_on_startup: settings.launch_on_startup,
         ignore_cert_errors: settings.ignore_cert_errors,
@@ -96,6 +98,7 @@ export class TauriAPI {
 
       const tauriSettings: TauriAppSettings = {
         default_browser: settings.default_browser,
+        default_launch_url: settings.default_launch_url,
         theme: settings.theme,
         launch_on_startup: settings.launch_on_startup,
         ignore_cert_errors: settings.ignore_cert_errors,
@@ -184,6 +187,7 @@ export class TauriAPI {
       const settings = await invoke<TauriAppSettings>('import_settings', { filePath })
       return {
         default_browser: settings.default_browser,
+        default_launch_url: settings.default_launch_url,
         theme: settings.theme as "light" | "dark" | "system",
         launch_on_startup: settings.launch_on_startup,
         ignore_cert_errors: settings.ignore_cert_errors,
@@ -196,6 +200,15 @@ export class TauriAPI {
       }
     } catch (error) {
       console.error('Failed to import settings:', error)
+      throw error
+    }
+  }
+
+  static async quitApp(): Promise<void> {
+    try {
+      await invoke('quit_app')
+    } catch (error) {
+      console.error('Failed to quit app:', error)
       throw error
     }
   }

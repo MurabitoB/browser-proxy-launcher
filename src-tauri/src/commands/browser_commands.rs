@@ -1,5 +1,5 @@
 use crate::browser::{detector, Browser};
-use crate::settings::{SettingsManager, ProxyConfig};
+use crate::settings::{ProxyConfig, SettingsManager};
 
 struct LaunchConfig {
     browser: Browser,
@@ -12,9 +12,7 @@ struct LaunchConfig {
 fn launch_browser_with_config(config: LaunchConfig) -> Result<(), String> {
     let mut command = std::process::Command::new(&config.browser.path);
 
-    // Set default profile directory
-    command.arg("--profile-directory=Default");
-
+    command.arg("--new-tab");
     // Add certificate error ignore flag if enabled
     if config.ignore_cert_errors {
         command.arg("--ignore-certificate-errors");
@@ -28,7 +26,7 @@ fn launch_browser_with_config(config: LaunchConfig) -> Result<(), String> {
     if let Some(proxy) = config.proxy {
         // Generate profile path based on profile name
         let profile_path = format!("./profiles/{}", config.profile_name);
-        
+
         // Get the settings directory and resolve profile path
         let settings_manager = SettingsManager::new()
             .map_err(|e| format!("Failed to create settings manager: {}", e))?;
@@ -52,29 +50,27 @@ fn launch_browser_with_config(config: LaunchConfig) -> Result<(), String> {
 
         match proxy.proxy_type.as_str() {
             "http" => {
-                let proxy_url = if let (Some(username), Some(password)) =
-                    (&proxy.username, &proxy.password)
-                {
-                    format!(
-                        "http://{}:{}@{}:{}",
-                        username, password, proxy.host, proxy.port
-                    )
-                } else {
-                    format!("http://{}:{}", proxy.host, proxy.port)
-                };
+                let proxy_url =
+                    if let (Some(username), Some(password)) = (&proxy.username, &proxy.password) {
+                        format!(
+                            "http://{}:{}@{}:{}",
+                            username, password, proxy.host, proxy.port
+                        )
+                    } else {
+                        format!("http://{}:{}", proxy.host, proxy.port)
+                    };
                 command.arg(&format!("--proxy-server={}", proxy_url));
             }
             "socks5" => {
-                let proxy_url = if let (Some(username), Some(password)) =
-                    (&proxy.username, &proxy.password)
-                {
-                    format!(
-                        "socks5://{}:{}@{}:{}",
-                        username, password, proxy.host, proxy.port
-                    )
-                } else {
-                    format!("socks5://{}:{}", proxy.host, proxy.port)
-                };
+                let proxy_url =
+                    if let (Some(username), Some(password)) = (&proxy.username, &proxy.password) {
+                        format!(
+                            "socks5://{}:{}@{}:{}",
+                            username, password, proxy.host, proxy.port
+                        )
+                    } else {
+                        format!("socks5://{}:{}", proxy.host, proxy.port)
+                    };
                 command.arg(&format!("--proxy-server={}", proxy_url));
             }
             "pac" => {
@@ -95,7 +91,10 @@ fn launch_browser_with_config(config: LaunchConfig) -> Result<(), String> {
     match command.spawn() {
         Ok(_) => {
             let target = config.url.as_deref().unwrap_or("home page");
-            println!("Successfully launched {} with {}", target, config.browser.name);
+            println!(
+                "Successfully launched {} with {}",
+                target, config.browser.name
+            );
             Ok(())
         }
         Err(e) => {
@@ -161,12 +160,19 @@ pub async fn launch_site(site_id: String, _app_handle: tauri::AppHandle) -> Resu
         None
     };
 
+    // Determine profile name before creating config to avoid borrowing issues
+    let profile_name = if let Some(ref proxy_config) = proxy {
+        proxy_config.name.clone()
+    } else {
+        format!("site-{}", site.name)
+    };
+
     // Create launch configuration
     let config = LaunchConfig {
         browser: browser.clone(),
         proxy,
         url: Some(site.url.clone()),
-        profile_name: format!("site-{}", site.name),
+        profile_name,
         ignore_cert_errors: settings.ignore_cert_errors,
     };
 
@@ -203,8 +209,12 @@ pub async fn launch_proxy(proxy_id: String, _app_handle: tauri::AppHandle) -> Re
     let config = LaunchConfig {
         browser: default_browser.clone(),
         proxy: Some(proxy.clone()),
-        url: None, // Open browser home page to test proxy connection
-        profile_name: format!("test-{}", proxy.name),
+        url: if settings.default_launch_url.is_empty() {
+            None
+        } else {
+            Some(settings.default_launch_url.clone())
+        },
+        profile_name: proxy.name.clone(),
         ignore_cert_errors: settings.ignore_cert_errors,
     };
 

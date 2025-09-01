@@ -4,9 +4,13 @@ mod commands;
 mod settings;
 
 use browser::detector;
-use commands::create_system_tray;
 use settings::SettingsManager;
 use tauri::Manager;
+
+#[tauri::command]
+fn quit_app(app_handle: tauri::AppHandle) {
+    app_handle.exit(0);
+}
 
 fn initialize_app() -> Result<(), Box<dyn std::error::Error>> {
     println!("Initializing application...");
@@ -52,17 +56,12 @@ pub fn run() {
             commands::import_settings,
             commands::launch_site,
             commands::launch_proxy,
-            commands::refresh_system_tray
+            quit_app
         ])
         .setup(|app| {
             // Initialize application settings and detect browsers
             if let Err(e) = initialize_app() {
                 eprintln!("Failed to initialize application: {}", e);
-            }
-
-            // Create system tray
-            if let Err(e) = create_system_tray(app.handle()) {
-                eprintln!("Failed to create system tray: {}", e);
             }
 
             // Check if launched with --minimized flag (auto-start)
