@@ -1,11 +1,13 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(mv:*)",
+      "Bash(cargo check:*)",
+      "Bash(git add:*)"
+    ]
+  },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "shadcn"
-  ],
-  "permissions": {
-    "allow": [
-      "Bash(mv:*)"
-    ]
-  }
+  ]
 }

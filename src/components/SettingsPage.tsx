@@ -175,12 +175,6 @@ export function SettingsPage({
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Switch id="autoDetect" defaultChecked />
-              <label htmlFor="autoDetect" className="text-sm text-foreground">
-                Auto-detect browser installations
-              </label>
-            </div>
 
             <div className="flex items-center gap-2">
               <Switch

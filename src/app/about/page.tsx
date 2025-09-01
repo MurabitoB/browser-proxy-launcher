@@ -41,7 +41,7 @@ export default function About() {
             <CardContent className="space-y-4">
               <div>
                 <h3 className="font-semibold mb-2 text-foreground">Version</h3>
-                <p className="text-muted-foreground">v0.1.1</p>
+                <p className="text-muted-foreground">v0.1.2</p>
               </div>
               <div>
                 <h3 className="font-semibold mb-2 text-foreground">
@@ -79,10 +79,6 @@ export default function About() {
                 <li className="flex items-center gap-2">
                   <span className="text-green-500">✓</span>
                   Dark/Light theme support
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
-                  Cross-platform desktop application
                 </li>
               </ul>
             </CardContent>
@@ -122,7 +118,6 @@ export default function About() {
               </div>
             </CardContent>
           </Card>
-
         </div>
       </div>
     </div>

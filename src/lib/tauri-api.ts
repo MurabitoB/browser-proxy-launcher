@@ -60,6 +60,15 @@ export class TauriAPI {
     }
   }
 
+  static async launchProxy(proxyId: string): Promise<void> {
+    try {
+      await invoke('launch_proxy', { proxyId })
+    } catch (error) {
+      console.error('Failed to launch proxy:', error)
+      throw error
+    }
+  }
+
   static async loadSettings(): Promise<AppSettings> {
     try {
       const settings = await invoke<TauriAppSettings>('load_settings')

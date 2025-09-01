@@ -2,10 +2,11 @@ import { ProxyConfig } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Server, Plus, Edit, Trash2 } from "lucide-react";
+import { Server, Plus, Edit, Trash2, Rocket } from "lucide-react";
 
 interface ProxyListProps {
   proxies: ProxyConfig[];
+  onLaunch: (proxy: ProxyConfig) => void;
   onEdit: (proxy: ProxyConfig) => void;
   onDelete: (proxyId: string) => void;
   onAddProxy: () => void;
@@ -13,6 +14,7 @@ interface ProxyListProps {
 
 export function ProxyList({
   proxies,
+  onLaunch,
   onEdit,
   onDelete,
   onAddProxy,
@@ -61,6 +63,9 @@ export function ProxyList({
                   onClick={() => onDelete(proxy.id)}
                 >
                   <Trash2 className="h-4 w-4" />
+                </Button>
+                <Button size="sm" onClick={() => onLaunch(proxy)}>
+                  <Rocket className="h-4 w-4" />
                 </Button>
               </div>
             </div>

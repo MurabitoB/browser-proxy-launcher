@@ -51,6 +51,7 @@ pub fn run() {
             commands::export_settings,
             commands::import_settings,
             commands::launch_site,
+            commands::launch_proxy,
             commands::refresh_system_tray
         ])
         .setup(|app| {

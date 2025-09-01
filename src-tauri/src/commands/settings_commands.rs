@@ -1,6 +1,6 @@
 use crate::autostart::AutoStartManager;
 use crate::settings::{AppSettings, SettingsManager};
-use crate::commands::tray_commands::create_system_tray;
+use crate::commands::tray_commands::refresh_system_tray;
 use std::env;
 
 fn is_development_mode() -> bool {
@@ -109,7 +109,7 @@ pub async fn save_settings(settings: AppSettings, app_handle: tauri::AppHandle) 
     }
 
     // Refresh system tray to reflect changes in sites
-    if let Err(e) = create_system_tray(&app_handle) {
+    if let Err(e) = refresh_system_tray(app_handle.clone()).await {
         eprintln!("Failed to refresh system tray: {}", e);
         // Don't fail the save operation if tray refresh fails
     }
@@ -204,7 +204,7 @@ pub async fn import_settings(file_path: String, app_handle: tauri::AppHandle) ->
         .map_err(|e| format!("Failed to update auto-start setting: {}", e))?;
 
     // Refresh system tray to reflect imported settings
-    if let Err(e) = create_system_tray(&app_handle) {
+    if let Err(e) = refresh_system_tray(app_handle.clone()).await {
         eprintln!("Failed to refresh system tray after import: {}", e);
         // Don't fail the import operation if tray refresh fails
     }

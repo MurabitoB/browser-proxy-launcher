@@ -30,4 +30,3 @@
 ## Data format
 
 - DateTime: Use ISO 8601 format (e.g., "2023-10-01T12:00:00Z").
-- Currency: Use lowercase strings (e.g., "meso", "snow").

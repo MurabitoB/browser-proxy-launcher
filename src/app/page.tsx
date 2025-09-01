@@ -72,6 +72,15 @@ export default function HomePage() {
     }
   };
 
+  const handleLaunchProxy = async (proxy: ProxyConfig) => {
+    try {
+      await TauriAPI.launchProxy(proxy.id);
+    } catch (error) {
+      console.error("Failed to launch proxy:", error);
+      alert("Failed to launch proxy, please try again later");
+    }
+  };
+
   const handleEditProxy = (proxy: ProxyConfig) => {
     setEditingProxy(proxy);
     setProxyDialogMode("edit");
@@ -237,6 +246,7 @@ export default function HomePage() {
           {/* Proxy Management Section */}
           <ProxyList
             proxies={proxies}
+            onLaunch={handleLaunchProxy}
             onEdit={handleEditProxy}
             onDelete={handleDeleteProxy}
             onAddProxy={handleAddProxy}
