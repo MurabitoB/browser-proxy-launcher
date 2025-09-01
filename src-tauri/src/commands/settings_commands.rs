@@ -1,5 +1,6 @@
 use crate::autostart::AutoStartManager;
 use crate::settings::{AppSettings, SettingsManager};
+use crate::commands::tray_commands::create_system_tray;
 use std::env;
 
 fn is_development_mode() -> bool {
@@ -44,7 +45,7 @@ pub async fn load_settings() -> Result<AppSettings, String> {
 }
 
 #[tauri::command]
-pub async fn save_settings(settings: AppSettings) -> Result<(), String> {
+pub async fn save_settings(settings: AppSettings, app_handle: tauri::AppHandle) -> Result<(), String> {
     println!("Saving settings: {:?}", settings);
 
     let settings_manager =
@@ -106,6 +107,13 @@ pub async fn save_settings(settings: AppSettings) -> Result<(), String> {
             cleaned_settings.launch_on_startup
         );
     }
+
+    // Refresh system tray to reflect changes in sites
+    if let Err(e) = create_system_tray(&app_handle) {
+        eprintln!("Failed to refresh system tray: {}", e);
+        // Don't fail the save operation if tray refresh fails
+    }
+
     Ok(())
 }
 
@@ -173,7 +181,7 @@ pub async fn export_settings(file_path: String) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub async fn import_settings(file_path: String) -> Result<AppSettings, String> {
+pub async fn import_settings(file_path: String, app_handle: tauri::AppHandle) -> Result<AppSettings, String> {
     let content = std::fs::read_to_string(&file_path)
         .map_err(|e| format!("Failed to read settings file: {}", e))?;
 
@@ -194,6 +202,12 @@ pub async fn import_settings(file_path: String) -> Result<AppSettings, String> {
     auto_start_manager
         .set_enabled(settings.launch_on_startup)
         .map_err(|e| format!("Failed to update auto-start setting: {}", e))?;
+
+    // Refresh system tray to reflect imported settings
+    if let Err(e) = create_system_tray(&app_handle) {
+        eprintln!("Failed to refresh system tray after import: {}", e);
+        // Don't fail the import operation if tray refresh fails
+    }
 
     println!("Settings imported from: {}", file_path);
     Ok(settings)

@@ -50,7 +50,8 @@ pub fn run() {
             commands::set_autostart,
             commands::export_settings,
             commands::import_settings,
-            commands::launch_site
+            commands::launch_site,
+            commands::refresh_system_tray
         ])
         .setup(|app| {
             // Initialize application settings and detect browsers

@@ -2,10 +2,14 @@ use crate::commands::browser_commands::launch_site;
 use crate::settings::SettingsManager;
 use tauri::menu::Submenu;
 use tauri::{AppHandle, Manager};
+use std::sync::Mutex;
 
 // Removed launch_site_from_tray - moved to browser_commands.rs as launch_site
 // Removed get_sites_for_tray - use load_settings command instead
 // The SiteInfo struct is no longer needed as we use SiteConfig from settings
+
+// Global tray instance management
+static TRAY_INSTANCE: Mutex<Option<tauri::tray::TrayIconId>> = Mutex::new(None);
 
 pub fn create_system_tray(app: &AppHandle) -> tauri::Result<()> {
     use tauri::{
@@ -21,7 +25,14 @@ pub fn create_system_tray(app: &AppHandle) -> tauri::Result<()> {
 
     let menu = Menu::with_items(app, &[&sites_submenu, &separator, &quit])?;
 
-    let _tray = TrayIconBuilder::new()
+    // Remove existing tray if it exists
+    if let Ok(mut tray_guard) = TRAY_INSTANCE.lock() {
+        if let Some(existing_tray_id) = tray_guard.take() {
+            let _ = app.remove_tray_by_id(&existing_tray_id);
+        }
+    }
+
+    let tray = TrayIconBuilder::new()
         .menu(&menu)
         .icon(app.default_window_icon().unwrap().clone())
         .on_menu_event(|app, event| {
@@ -71,7 +82,17 @@ pub fn create_system_tray(app: &AppHandle) -> tauri::Result<()> {
         })
         .build(app)?;
 
+    // Store the new tray instance ID
+    if let Ok(mut tray_guard) = TRAY_INSTANCE.lock() {
+        *tray_guard = Some(tray.id().clone());
+    }
+
     Ok(())
+}
+
+#[tauri::command]
+pub async fn refresh_system_tray(app_handle: tauri::AppHandle) -> Result<(), String> {
+    create_system_tray(&app_handle).map_err(|e| format!("Failed to refresh system tray: {}", e))
 }
 
 fn create_sites_submenu(app: &AppHandle) -> tauri::Result<Submenu<tauri::Wry>> {
