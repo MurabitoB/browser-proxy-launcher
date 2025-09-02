@@ -66,8 +66,6 @@ src-tauri/Cargo.lock
 # Rust
 target/
 
-# Local Tauri artifacts  
-src-tauri/icons/
 
 # Tauri generated files
 src-tauri/gen/
