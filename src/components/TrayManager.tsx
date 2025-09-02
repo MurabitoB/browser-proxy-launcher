@@ -2,7 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useAppData } from "@/hooks/useAppData";
-import { TrayIcon } from "@tauri-apps/api/tray";
+import {
+  TrayIcon,
+  TrayIconEvent,
+  TrayIconEventType,
+} from "@tauri-apps/api/tray";
 import { defaultWindowIcon } from "@tauri-apps/api/app";
 import { Menu, Submenu, MenuItem } from "@tauri-apps/api/menu";
 import { TauriAPI } from "@/lib/tauri-api";
@@ -11,6 +15,26 @@ import { ProxyConfig, SiteConfig } from "@/types";
 interface TrayManagerProps {
   children: React.ReactNode;
 }
+
+const clickHandler = (event: any) => {
+  switch (event) {
+    case "Click":
+      TauriAPI.toggleWindow();
+      break;
+    case "DoubleClick":
+      console.log("Tray icon double clicked");
+      break;
+    case "Enter":
+      console.log("Tray icon mouse entered");
+      break;
+    case "Move":
+      console.log("Tray icon mouse moved");
+      break;
+    case "Leave":
+      console.log("Tray icon mouse left");
+      break;
+  }
+};
 
 export async function createContextMenu(
   tray: TrayIcon,
@@ -79,8 +103,30 @@ export function TrayManager({ children }: TrayManagerProps) {
       try {
         const options = {
           icon: (await defaultWindowIcon())!,
+          menuOnLeftClick: false,
+          action: (event: TrayIconEvent) => {
+            switch (event.type) {
+              case "Click":
+                console.log("Tray icon clicked");
+                break;
+              case "DoubleClick":
+                TauriAPI.toggleWindow();
+                console.log("Tray icon double clicked");
+                break;
+              case "Enter":
+                console.log("Tray icon mouse entered");
+                break;
+              case "Move":
+                console.log("Tray icon mouse moved");
+                break;
+              case "Leave":
+                console.log("Tray icon mouse left");
+                break;
+            }
+          },
         };
         const newTray = await TrayIcon.new(options);
+
         setTray(newTray);
       } finally {
         isCreatingTray.current = false;

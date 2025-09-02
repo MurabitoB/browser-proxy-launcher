@@ -27,7 +27,7 @@ This application solves the following challenges:
 
 ### Tauri Environment Setup
 
-Please follow the official Tauri installation guide: https://tauri.app/v1/guides/getting-started/prerequisites
+Please follow the official Tauri installation guide: https://v2.tauri.app/start/prerequisites/
 
 ### Node.js Environment
 

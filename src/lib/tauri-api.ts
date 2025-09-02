@@ -212,4 +212,13 @@ export class TauriAPI {
       throw error
     }
   }
+
+  static async toggleWindow(): Promise<void> {
+    try {
+      await invoke('toggle_window')
+    } catch (error) {
+      console.error('Failed to toggle window:', error)
+      throw error
+    }
+  }
 }

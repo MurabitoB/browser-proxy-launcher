@@ -100,7 +100,7 @@ export function ProxyDialog({
         name: proxy.name,
         type: proxy.proxy_type,
         host: proxy.host,
-        port: proxy.port,
+        port: proxy.port || 1,
         username: proxy.username || "",
         password: proxy.password || "",
         url: proxy.url || "",

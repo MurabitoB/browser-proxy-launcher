@@ -56,6 +56,7 @@ pub fn run() {
             commands::import_settings,
             commands::launch_site,
             commands::launch_proxy,
+            commands::toggle_window,
             quit_app
         ])
         .setup(|app| {

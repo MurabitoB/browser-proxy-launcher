@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft, ExternalLink, Github } from "lucide-react";
 
 export default function About() {
   const router = useRouter();
@@ -41,7 +41,7 @@ export default function About() {
             <CardContent className="space-y-4">
               <div>
                 <h3 className="font-semibold mb-2 text-foreground">Version</h3>
-                <p className="text-muted-foreground">v0.1.4</p>
+                <p className="text-muted-foreground">v0.1.5</p>
               </div>
               <div>
                 <h3 className="font-semibold mb-2 text-foreground">
@@ -91,31 +91,78 @@ export default function About() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="flex items-center gap-2">
+                <a
+                  href="https://nextjs.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 hover:text-blue-500 transition-colors"
+                >
                   <ExternalLink className="h-4 w-4 text-blue-500" />
                   <span>Next.js</span>
-                </div>
-                <div className="flex items-center gap-2">
+                </a>
+                <a
+                  href="https://react.dev/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 hover:text-blue-500 transition-colors"
+                >
                   <ExternalLink className="h-4 w-4 text-blue-500" />
                   <span>React</span>
-                </div>
-                <div className="flex items-center gap-2">
+                </a>
+                <a
+                  href="https://v2.tauri.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 hover:text-orange-500 transition-colors"
+                >
                   <ExternalLink className="h-4 w-4 text-orange-500" />
                   <span>Tauri</span>
-                </div>
-                <div className="flex items-center gap-2">
+                </a>
+                <a
+                  href="https://www.typescriptlang.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 hover:text-blue-400 transition-colors"
+                >
                   <ExternalLink className="h-4 w-4 text-blue-400" />
                   <span>TypeScript</span>
-                </div>
-                <div className="flex items-center gap-2">
+                </a>
+                <a
+                  href="https://tailwindcss.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 hover:text-teal-500 transition-colors"
+                >
                   <ExternalLink className="h-4 w-4 text-teal-500" />
                   <span>Tailwind CSS</span>
-                </div>
-                <div className="flex items-center gap-2">
+                </a>
+                <a
+                  href="https://www.rust-lang.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 hover:text-orange-600 transition-colors"
+                >
                   <ExternalLink className="h-4 w-4 text-orange-600" />
                   <span>Rust</span>
-                </div>
+                </a>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* GitHub Link */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Source Code</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <a
+                href="https://github.com/MurabitoB/browser-proxy-launcher"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center p-3 rounded-lg border border-border hover:bg-accent hover:text-accent-foreground transition-colors"
+              >
+                <Github className="h-6 w-6" />
+              </a>
             </CardContent>
           </Card>
         </div>
