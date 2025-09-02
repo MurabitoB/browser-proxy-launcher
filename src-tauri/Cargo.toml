@@ -1,6 +1,6 @@
 [package]
 name = "browser-proxy-launcher"
-version = "0.1.3"
+version = "0.1.4"
 description = "A browser launcher with proxy settings"
 authors = ["MurabitoB"]
 edition = "2021"

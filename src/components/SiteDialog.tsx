@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { ProxyConfig, Browser, SiteConfig } from "@/types";
 
 const siteFormSchema = z.object({
@@ -203,8 +204,12 @@ export function SiteDialog({
                         <SelectItem value="none">No proxy</SelectItem>
                         {proxies.map((proxy) => (
                           <SelectItem key={proxy.id} value={proxy.id}>
-                            {proxy.name} ({proxy.proxy_type}://{proxy.host}:
-                            {proxy.port})
+                            <div>
+                              <span className="mr-2"> {proxy.name}</span>
+                              <Badge variant="outline" className="text-xs">
+                                {proxy.proxy_type}
+                              </Badge>
+                            </div>
                           </SelectItem>
                         ))}
                       </SelectContent>
